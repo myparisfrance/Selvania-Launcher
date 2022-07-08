@@ -1,25 +1,9 @@
-/**
- * @author Luuxis
- * @license CC-BY-NC 4.0 - https://creativecommons.org/licenses/by-nc/4.0/
- */
-
 const { app, ipcMain } = require('electron');
 const { Microsoft } = require('minecraft-java-core');
 const { autoUpdater } = require('electron-updater')
-
-const path = require('path');
-const fs = require('fs');
-
 const UpdateWindow = require("./assets/js/windows/updateWindow.js");
 const MainWindow = require("./assets/js/windows/mainWindow.js");
 
-let dev = process.env.NODE_ENV === 'dev';
-
-if (dev) {
-    let appPath = path.resolve('./AppData/Launcher').replace(/\\/g, '/');
-    if(!fs.existsSync(appPath)) fs.mkdirSync(appPath, { recursive: true });
-    app.setPath('userData', appPath);
-}
 
 const gotTheLock = app.requestSingleInstanceLock();
 
@@ -37,7 +21,6 @@ ipcMain.on('main-window-open', () => MainWindow.createWindow())
 ipcMain.on('main-window-dev-tools', () => MainWindow.getWindow().webContents.openDevTools())
 ipcMain.on('main-window-close', () => MainWindow.destroyWindow())
 ipcMain.on('main-window-progress', (event, options) => MainWindow.getWindow().setProgressBar(options.DL / options.totDL))
-ipcMain.on('main-window-progress-reset', (event, options) => MainWindow.getWindow().setProgressBar(options.DL / options.totDL))
 ipcMain.on('main-window-minimize', () => MainWindow.getWindow().minimize())
 
 ipcMain.on('main-window-maximize', () => {
